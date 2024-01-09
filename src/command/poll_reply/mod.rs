@@ -64,6 +64,63 @@ data_structure! {
     }
 }
 
+
+// address: 192.168.0.200, 
+// port: 6454, 
+// version: [4, 15], 
+// port_address: [0, 0], 
+// oem: [34, 105], 
+// ubea_version: 0, 
+// status_1: 0, 
+// esta_code: 16716, 
+// short_name: "DMX-Workshop", 
+// long_name: "DMX-Workshop", 
+// node_report: [
+//     35, 48, 48, 48, 49, 32, 91, 48, 48, 48, 49, 93, 32, 80, 111, 119, 101, 114, 32, 79, 110, 32, 84, 101, 115, 116, 115, 32, 80, 97, 115, 115, 46, 
+//     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+// ], 
+// num_ports: [0, 1], 
+// port_types: [64, 0, 0, 0], 
+// good_input: [128, 0, 0, 0], 
+// good_output: [0, 0, 0, 0], 
+// swin: [1, 0, 0, 0], 
+// swout: [0, 0, 0, 0],
+// sw_video: 0, 
+// sw_macro: 0, 
+// sw_remote: 0,
+// style: 0, 
+// mac: [0, 0, 0, 0, 0, 0], 
+// bind_ip: [192, 168, 0, 200], 
+// bind_index: 1, 
+// filler: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+// impl Default for PollReply {
+//     fn default() -> PollReply {
+//         PollReply {
+//             port: 6454,
+//             version: super::ARTNET_PROTOCOL_VERSION,
+//             port_address: [0, 0],
+//             oem: [255, 255],
+//             ubea_version: 0,
+//             status_1: 0,
+//             esta_code: 16716,
+//             short_name: String::from("Ephoria").into_bytes(),
+//             long_name: String::from("EphoriaController").into_bytes(), 
+//             // node_report: [
+//         }
+//     }
+// }
+
+trait DataToString {
+    fn get_node_report(&self) -> String;
+}
+// impl DataToString for PollReply {
+//     fn get_node_report(&self) -> String {
+//       String::from_utf8(self.node_report[..self.node_report.len()])
+//     }
+
+// }
+
 impl fmt::Debug for PollReply {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         let short_name = str::from_utf8(&self.short_name)

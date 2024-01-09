@@ -3,6 +3,7 @@ mod tests;
 
 use crate::{command::ARTNET_PROTOCOL_VERSION, convert::Convertable, Error, PortAddress, Result};
 use byteorder::{BigEndian, ReadBytesExt, WriteBytesExt};
+use std::convert::TryFrom;
 use std::io::Cursor;
 
 data_structure! {
@@ -126,6 +127,61 @@ pub struct BigEndianLength<T> {
     parsed_length: Option<u16>,
     _pd: std::marker::PhantomData<T>,
 }
+
+
+// basic support for u8 literals
+impl<T> From<u8> for BigEndianLength<T> {
+    fn from(length: u8) -> Self {
+        BigEndianLength {
+            parsed_length: Some(length as u16),
+            _pd: std::marker::PhantomData,
+        }
+    }
+}
+impl<T> TryFrom<u16> for BigEndianLength<T> {
+    type Error = Error;
+    fn try_from(length: u16) -> Result<Self> {
+        if length <= 32_767 {
+            Ok(
+                BigEndianLength {
+                    parsed_length: Some(length),
+                    _pd: std::marker::PhantomData,
+                }
+            )
+        } else {
+            Ok(
+                BigEndianLength {
+                    parsed_length: Some(32_767 as u16),
+                    _pd: std::marker::PhantomData,
+                }
+            )
+            // Err(Error::InvalidPortAddress(value.into()))
+        }
+    }
+}
+
+// support un-annotated literals
+impl<T> TryFrom<i32> for BigEndianLength<T> {
+    type Error = Error;
+    fn try_from(length: i32) -> Result<Self> {
+        if (0..=32767).contains(&length) {
+            Ok(
+                BigEndianLength {
+                    parsed_length: Some(length as u16),
+                    _pd: std::marker::PhantomData,
+                })
+        } else {
+            Ok(
+                BigEndianLength {
+                    parsed_length: Some(32_767 as u16),
+                    _pd: std::marker::PhantomData,
+                }
+            )
+            // Err(Error::InvalidPortAddress(length))
+        }
+    }
+}
+
 
 impl<T> std::fmt::Debug for BigEndianLength<T> {
     fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
